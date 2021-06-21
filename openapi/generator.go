@@ -104,6 +104,12 @@ func (g *Generator) SetServers(servers []*Server) {
 	g.api.Servers = servers
 }
 
+// SetSecurity sets the security options for the
+// current specification.
+func (g *Generator) SetSecurity(security *SecurityRequirement) {
+	g.api.Security = security
+}
+
 // API returns a copy of the internal OpenAPI object.
 func (g *Generator) API() *OpenAPI {
 	cpy := *g.api

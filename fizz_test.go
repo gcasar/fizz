@@ -315,6 +315,12 @@ func TestSpecHandler(t *testing.T) {
 	}
 	fizz.Generator().SetServers(servers)
 
+	security := *&openapi.SecurityRequirement{
+		"api_key": []string{},
+		"oauth2":  []string{"write:pets", "read:pets"},
+	}
+	fizz.Generator().SetSecurity(&security)
+
 	fizz.GET("/openapi.json", nil, fizz.OpenAPI(infos, "")) // default is JSON
 	fizz.GET("/openapi.yaml", nil, fizz.OpenAPI(infos, "yaml"))
 

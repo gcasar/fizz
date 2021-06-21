@@ -19,7 +19,15 @@
                 "description": "version of the API"
             }
         }
-    }],
+        }
+    ],
+    "security": {
+        "api_key": [],
+        "oauth2": [
+            "write:pets",
+            "read:pets"
+        ]
+    },
     "paths": {
         "/test/{a}": {
             "get": {
