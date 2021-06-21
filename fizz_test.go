@@ -271,6 +271,8 @@ func TestSpecHandler(t *testing.T) {
 				Label:  "v4.4",
 				Source: "curl http://0.0.0.0:8080",
 			}),
+			// Explicit override for SecurityRequirement (allow-all)
+			NoSecurity(),
 		},
 		tonic.Handler(func(c *gin.Context) error {
 			return nil

@@ -1,5 +1,7 @@
 package openapi
 
+import "encoding/json"
+
 // OpenAPI represents the root document object of
 // an OpenAPI document.
 type OpenAPI struct {
@@ -186,17 +188,66 @@ type Schema struct {
 
 // Operation describes an API operation on a path.
 type Operation struct {
-	Tags         []string             `json:"tags,omitempty" yaml:"tags,omitempty"`
-	Summary      string               `json:"summary,omitempty" yaml:"summary,omitempty"`
-	Description  string               `json:"description,omitempty" yaml:"description,omitempty"`
-	ID           string               `json:"operationId,omitempty" yaml:"operationId,omitempty"`
-	Parameters   []*ParameterOrRef    `json:"parameters,omitempty" yaml:"parameters,omitempty"`
-	RequestBody  *RequestBody         `json:"requestBody,omitempty" yaml:"requestBody,omitempty"`
-	Responses    Responses            `json:"responses,omitempty" yaml:"responses,omitempty"`
-	Deprecated   bool                 `json:"deprecated,omitempty" yaml:"deprecated,omitempty"`
-	Servers      []*Server            `json:"servers,omitempty" yaml:"servers,omitempty"`
-	Security     *SecurityRequirement `json:"security,omitempty" yaml:"security,omitempty"`
-	XCodeSamples []*XCodeSample       `json:"x-codeSamples,omitempty" yaml:"x-codeSamples,omitempty"`
+	Tags         []string               `json:"tags,omitempty" yaml:"tags,omitempty"`
+	Summary      string                 `json:"summary,omitempty" yaml:"summary,omitempty"`
+	Description  string                 `json:"description,omitempty" yaml:"description,omitempty"`
+	ID           string                 `json:"operationId,omitempty" yaml:"operationId,omitempty"`
+	Parameters   []*ParameterOrRef      `json:"parameters,omitempty" yaml:"parameters,omitempty"`
+	RequestBody  *RequestBody           `json:"requestBody,omitempty" yaml:"requestBody,omitempty"`
+	Responses    Responses              `json:"responses,omitempty" yaml:"responses,omitempty"`
+	Deprecated   bool                   `json:"deprecated,omitempty" yaml:"deprecated,omitempty"`
+	Servers      []*Server              `json:"servers,omitempty" yaml:"servers,omitempty"`
+	Security     []*SecurityRequirement `json:"security" yaml:"security"`
+	XCodeSamples []*XCodeSample         `json:"x-codeSamples,omitempty" yaml:"x-codeSamples,omitempty"`
+}
+
+// A workaround for missing omitnil functionality.
+// explicitly excludes Security which:
+// - must not be present when nil
+// - must be marshalled when empty - signals no security
+type operationNilOmitted struct {
+	Tags         []string          `json:"tags,omitempty" yaml:"tags,omitempty"`
+	Summary      string            `json:"summary,omitempty" yaml:"summary,omitempty"`
+	Description  string            `json:"description,omitempty" yaml:"description,omitempty"`
+	ID           string            `json:"operationId,omitempty" yaml:"operationId,omitempty"`
+	Parameters   []*ParameterOrRef `json:"parameters,omitempty" yaml:"parameters,omitempty"`
+	RequestBody  *RequestBody      `json:"requestBody,omitempty" yaml:"requestBody,omitempty"`
+	Responses    Responses         `json:"responses,omitempty" yaml:"responses,omitempty"`
+	Deprecated   bool              `json:"deprecated,omitempty" yaml:"deprecated,omitempty"`
+	Servers      []*Server         `json:"servers,omitempty" yaml:"servers,omitempty"`
+	XCodeSamples []*XCodeSample    `json:"x-codeSamples,omitempty" yaml:"x-codeSamples,omitempty"`
+}
+
+// MarshalYAML implements yaml.Marshaler for Operation.
+// Needed to marshall empty but non-null SecurityRequirements.
+func (o *Operation) MarshalYAML() (interface{}, error) {
+	if o.Security == nil {
+		return omitOperationNilFields(o), nil
+	}
+	return o, nil
+}
+
+// MarshalJSON excludes empty but non-null SecurityRequirements.
+func (o *Operation) MarshalJSON() ([]byte, error) {
+	if o.Security == nil {
+		return json.Marshal(omitOperationNilFields(o))
+	}
+	return json.Marshal(*o)
+}
+
+func omitOperationNilFields(o *Operation) *operationNilOmitted {
+	return &operationNilOmitted{
+		Tags:         o.Tags,
+		Summary:      o.Summary,
+		Description:  o.Description,
+		ID:           o.ID,
+		Parameters:   o.Parameters,
+		RequestBody:  o.RequestBody,
+		Responses:    o.Responses,
+		Deprecated:   o.Deprecated,
+		Servers:      o.Servers,
+		XCodeSamples: o.XCodeSamples,
+	}
 }
 
 // Responses represents a container for the expected responses

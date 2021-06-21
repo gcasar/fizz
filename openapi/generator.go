@@ -257,6 +257,7 @@ func (g *Generator) AddOperation(path, method, tag string, in, out reflect.Type,
 		op.Deprecated = info.Deprecated
 		op.Responses = make(Responses)
 		op.XCodeSamples = info.XCodeSamples
+		op.Security = info.Security
 	}
 	if tag != "" {
 		op.Tags = append(op.Tags, tag)

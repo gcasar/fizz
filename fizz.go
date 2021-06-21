@@ -356,7 +356,14 @@ func InputModel(model interface{}) func(*openapi.OperationInfo) {
 // Security adds a security definition to an operation.
 func Security(security *openapi.SecurityRequirement) func(*openapi.OperationInfo) {
 	return func(o *openapi.OperationInfo) {
-		o.Security = security
+		o.Security = append(o.Security, security)
+	}
+}
+
+// NoSecurity explicitly removes all security.
+func NoSecurity() func(*openapi.OperationInfo) {
+	return func(o *openapi.OperationInfo) {
+		o.Security = []*openapi.SecurityRequirement{}
 	}
 }
 
