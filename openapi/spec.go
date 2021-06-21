@@ -319,6 +319,14 @@ type SecuritySchemeOrRef struct {
 	*Reference
 }
 
+// MarshalYAML implements yaml.Marshaler for SecuritySchemeOrRef.
+func (sor *SecuritySchemeOrRef) MarshalYAML() (interface{}, error) {
+	if sor.SecurityScheme != nil {
+		return sor.SecurityScheme, nil
+	}
+	return sor.Reference, nil
+}
+
 // SecurityScheme represents how the API is secured
 type SecurityScheme struct {
 	Type             string      `json:"type,omitempty" yaml:"type,omitempty"`

@@ -315,11 +315,35 @@ func TestSpecHandler(t *testing.T) {
 	}
 	fizz.Generator().SetServers(servers)
 
-	security := *&openapi.SecurityRequirement{
+	security := openapi.SecurityRequirement{
 		"api_key": []string{},
 		"oauth2":  []string{"write:pets", "read:pets"},
 	}
 	fizz.Generator().SetSecurity(&security)
+
+	fizz.Generator().API().Components.SecuritySchemes = map[string]*openapi.SecuritySchemeOrRef{
+		"api_key": {
+			SecurityScheme: &openapi.SecurityScheme{
+				Type: "apiKey",
+				Name: "api_key",
+				In:   "header",
+			},
+		},
+		"oauth2": {
+			SecurityScheme: &openapi.SecurityScheme{
+				Type: "oauth2",
+				Flows: &openapi.OAuthFlows{
+					Implicit: &openapi.OAuthFlow{
+						AuthorizationURL: "https://example.com/api/oauth/dialog",
+						Scopes: map[string]string{
+							"write:pets": "modify pets in your account",
+							"read:pets":  "read your pets",
+						},
+					},
+				},
+			},
+		},
+	}
 
 	fizz.GET("/openapi.json", nil, fizz.OpenAPI(infos, "")) // default is JSON
 	fizz.GET("/openapi.yaml", nil, fizz.OpenAPI(infos, "yaml"))
