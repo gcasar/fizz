@@ -229,8 +229,9 @@ type testInputModel struct {
 }
 
 type testInputModel2 struct {
-	C       string `path:"c"`
-	Message string `json:"message" description:"A short message"`
+	C        string      `path:"c"`
+	Message  string      `json:"message" description:"A short message"`
+	AnyValue interface{} `json:"value" description:"A nullable value of arbitrary type"`
 }
 
 // TestSpecHandler tests that the OpenAPI handler
@@ -264,6 +265,11 @@ func TestSpecHandler(t *testing.T) {
 			ResponseWithExamples("400", "", String, nil, map[string]interface{}{
 				"one": "message1",
 				"two": "message2",
+			}),
+			XCodeSample(&openapi.XCodeSample{
+				Lang:   "Shell",
+				Label:  "v4.4",
+				Source: "curl http://0.0.0.0:8080",
 			}),
 		},
 		tonic.Handler(func(c *gin.Context) error {

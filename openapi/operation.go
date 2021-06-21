@@ -13,6 +13,7 @@ type OperationInfo struct {
 	InputModel        interface{}
 	Responses         []*OperationResponse
 	Security          map[string][]string
+	XCodeSamples      []*XCodeSample
 }
 
 // ResponseHeader represents a single header that
