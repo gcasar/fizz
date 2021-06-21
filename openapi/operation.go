@@ -12,7 +12,7 @@ type OperationInfo struct {
 	Deprecated        bool
 	InputModel        interface{}
 	Responses         []*OperationResponse
-	Security          map[string][]string
+	Security          *SecurityRequirement
 	XCodeSamples      []*XCodeSample
 }
 
