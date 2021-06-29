@@ -296,6 +296,7 @@ func TestSpecHandler(t *testing.T) {
 			ID("PostTest"),
 			StatusDescription("201"),
 			StatusDescription("Created"),
+			Security
 		},
 		tonic.Handler(func(c *gin.Context, in *testInputModel2) error {
 			return nil
@@ -321,7 +322,7 @@ func TestSpecHandler(t *testing.T) {
 		"api_key": []string{},
 		"oauth2":  []string{"write:pets", "read:pets"},
 	}
-	fizz.Generator().SetSecurity(&security)
+	fizz.Generator().SetSecurityRequirement(&security)
 
 	fizz.Generator().API().Components.SecuritySchemes = map[string]*openapi.SecuritySchemeOrRef{
 		"api_key": {
