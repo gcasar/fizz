@@ -202,9 +202,7 @@ type Operation struct {
 }
 
 // A workaround for missing omitnil functionality.
-// explicitly excludes Security which:
-// - must not be present when nil
-// - must be marshalled when empty - signals no security
+// Explicitely omit the Security field from marshaling when it is nil, but not when empty.
 type operationNilOmitted struct {
 	Tags         []string          `json:"tags,omitempty" yaml:"tags,omitempty"`
 	Summary      string            `json:"summary,omitempty" yaml:"summary,omitempty"`
