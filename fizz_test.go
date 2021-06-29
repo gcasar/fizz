@@ -272,7 +272,7 @@ func TestSpecHandler(t *testing.T) {
 				Source: "curl http://0.0.0.0:8080",
 			}),
 			// Explicit override for SecurityRequirement (allow-all)
-			NoSecurity(),
+			WithoutSecurity(),
 		},
 		tonic.Handler(func(c *gin.Context) error {
 			return nil
@@ -282,6 +282,8 @@ func TestSpecHandler(t *testing.T) {
 	fizz.GET("/test/:a/:b", []OperationOption{
 		ID("GetTest2"),
 		InputModel(&testInputModel{}),
+		WithOptionalSecurity(),
+		Security(&openapi.SecurityRequirement{"oauth2": []string{"write:pets", "read:pets"}}),
 	}, tonic.Handler(func(c *gin.Context) error {
 		return nil
 	}, 200))
@@ -296,7 +298,6 @@ func TestSpecHandler(t *testing.T) {
 			ID("PostTest"),
 			StatusDescription("201"),
 			StatusDescription("Created"),
-			Security
 		},
 		tonic.Handler(func(c *gin.Context, in *testInputModel2) error {
 			return nil

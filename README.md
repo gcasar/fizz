@@ -96,6 +96,17 @@ fizz.Header(name, desc string, model interface{})
 // Override the binding model of the operation.
 fizz.InputModel(model interface{})
 
+// Add a security requirement to the list of security overrides for this operation.
+// Note that this removes all other SecurityRequirements
+// that might have been specified in the root `security` property.
+fizz.Security(security *openapi.SecurityRequirement)
+
+// Make other security requirements optional.
+fizz.WithOptionalSecurity()
+
+// Remove any security requirements for this operation.
+fizz.WithoutSecurity()
+
 // Add a Code Sample to the operation.
 fizz.XCodeSample(codeSample *XCodeSample)
 ```

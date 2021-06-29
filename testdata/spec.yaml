@@ -91,6 +91,11 @@ paths:
       responses:
         '200':
           description: OK
+      security:
+      - {}
+      - oauth2:
+        - write:pets
+        - read:pets
   /test/{c}:
     post:
       operationId: PostTest

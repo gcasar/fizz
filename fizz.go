@@ -360,8 +360,16 @@ func Security(security *openapi.SecurityRequirement) func(*openapi.OperationInfo
 	}
 }
 
-// NoSecurity explicitly removes all security.
-func NoSecurity() func(*openapi.OperationInfo) {
+// WithOptionalSecurity makes other security requirements optional.
+func WithOptionalSecurity() func(*openapi.OperationInfo) {
+	return func(o *openapi.OperationInfo) {
+		var emptyRequirement openapi.SecurityRequirement = make(openapi.SecurityRequirement)
+		o.Security = append(o.Security, &emptyRequirement)
+	}
+}
+
+// WithoutSecurity explicitly removes all security.
+func WithoutSecurity() func(*openapi.OperationInfo) {
 	return func(o *openapi.OperationInfo) {
 		o.Security = []*openapi.SecurityRequirement{}
 	}
